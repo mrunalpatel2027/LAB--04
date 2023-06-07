@@ -61,8 +61,8 @@ def generate_port_traffic_report(port_number):
     # Generate the CSV report
     df = pd.DataFrame(data)
     csv_filename = f"destination_port_{port_number}_reports.csv"
-    heading = ('Data', 'Time', 'Source IP Address','Source Port', 'Destination Port')
-    df.to_csv(csv_filename, index=False, header=heading)
+    headings = ('Data', 'Time', 'Source IP Address','Source Port', 'Destination Port')
+    df.to_csv(csv_filename, index=False, header=headings)
     return
 
 def generate_invalid_user_report():
