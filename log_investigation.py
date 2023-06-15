@@ -1,10 +1,8 @@
 """
 Description:
  Generates various reports from a gateway log file.
-
 Usage:
  python log_investigation.py log_path
-
 Parameters:
  log_path = Path of the gateway log file
 """
@@ -33,35 +31,31 @@ def main():
 def tally_port_traffic():
     """Produces a dictionary of destination port numbers (key) that appear in a 
     specified log file and a count of how many times they appear (value)
-
     Returns:
         dict: Dictionary of destination port number counts
     """
-
+    # TODO: Complete function body per step 7
     dpt_logs = log_analysis_lib.filter_log_by_regex(log_path, r'DPT=(.+?) ')[1]
-
     dpt_tally = {}
-
     for dpt in dpt_logs:
-        dpt_tally [dpt[0]] = dpt_tally.get(dpt[0], 0) + 1
-    #  Complete function body per step 7
+        dpt_tally[dpt[0]] = dpt_tally.get(dpt[0], 0) +1
+
+
     return dpt_tally
 
 def generate_port_traffic_report(port_number):
     """Produces a CSV report of all network traffic in a log file for a specified 
     destination port number.
-
     Args:
         port_number (str or int): Destination port number
     """
     # TODO: Complete function body per step 8
-
     # Get data from records that contain the specified destination port
-    data = log_analysis_lib.filter_log_by_regex(log_path, r'^(.+ \d+)(.{8}).*SRC=(.*?) .*SPT=(.*?) DPT=(.*?) ')[1]
+    data = log_analysis_lib.filter_log_by_regex(log_path, r'^(.+ \d+) (.{8}).*SRC=(.*?) DST=(.*?) .*SPT=(.*?) DPT=(.*?) ')[1]
     # Generate the CSV report
     df = pd.DataFrame(data)
-    csv_filename = f"destination_port_{port_number}_reports.csv"
-    headings = ('Data', 'Time', 'Source IP Address','Source Port', 'Destination Port')
+    csv_filename = f"destination_port_{port_number}_report.csv"
+    headings =('Date', 'Time', 'Source IP Address','Destination IP Address', 'Source Port', 'Destination Port' )
     df.to_csv(csv_filename, index=False, header=headings)
     return
 
@@ -71,19 +65,26 @@ def generate_invalid_user_report():
     """
     # TODO: Complete function body per step 10
     # Get data from records that show attempted invalid user login
+    data = log_analysis_lib.filter_log_by_regex(log_path, r'^(.+ \d+) (.{8}).*SRC=(.*?) DST=(.*?) .*SPT=(.*?) DPT=(.*?)')[1]
     # Generate the CSV report
+    df = pd.DataFrame(data)
+    csv_filename = f"invalid_users.csv"
+    headings = ('Date', 'Time', 'Username', 'IP address')
+    df.to_csv(csv_filename, index=False, header=headings)
     return
 
 def generate_source_ip_log(ip_address):
     """Produces a plain text .log file containing all records from a source log
     file that contain a specified source IP address.
-
     Args:
         ip_address (str): Source IP address
     """
     # TODO: Complete function body per step 11
     # Get all records that have the specified sourec IP address
+    regex = f"SRC={ip_address}"
+    data = log_analysis_lib.filter_log_by_regex(log_path, regex)
     # Save all records to a plain text .log file
+
     return
 
 if __name__ == '__main__':
